@@ -1,0 +1,34 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Azure Environment
+  displayName: 'Run a one-line script'
+
+- task: TerraformCLI@2
+  inputs:
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/demo3TierEnvironment'
+    allowTelemetryCollection: true
+- task: TerraformCLI@2
+  inputs:
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/demo3TierEnvironment'
+    commandOptions: '-var client_id=$(client_id) -var client_secret=$(client_secret)'
+    backendType: 'azurerm'
+    backendServiceArm: 'demoAzureEnv'
+    backendAzureRmSubscriptionId: '7f0fe164-a3df-4821-bf3b-53ec9f60e7c4'
+    backendAzureRmResourceGroupName: 'demoResourceGroup'
+    backendAzureRmStorageAccountName: 'demostorageaccount82493'
+    backendAzureRmContainerName: 'tfstate'
+    backendAzureRmKey: 'root.terraform.tfstate'
+    allowTelemetryCollection: true
+- task: TerraformCLI@2
+  inputs:
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/demo3TierEnvironment'
+    environmentServiceName: 'demoAzureEnv'
+    commandOptions: '-var client_id=$(client_id) -var client_secret=$(client_secret)'
